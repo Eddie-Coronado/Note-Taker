@@ -1,33 +1,59 @@
 const express = require('express');
-const router = express.Router();
 const note = require('../db/note');
-const { json } = require('body-parser');
+const fs = require('fs').promises;
+const router = express.Router();
+const { v4: uuidv4 } = require("uuid");
+
 
 router.get('/notes', (req, res) => {
-    note.getNotes()
-    .then((notes) => {
-        console.log(notes)
-        return res.json(notes);
+    return note.totalNotes().then(data => res.json(data))
+});
+
+router.post('/notes', (req, res) => {
+    console.log(req.body);
+    const title = req.body.title;
+    const text = req.body.text;
+
+    const totalNotes = { title, text, id: uuidv4() };
+
+    let pNotes;
+
+    fs.readFile('db/db.json', "utf8").then(
+        (notes) => {
+            pNotes = [].concat(JSON.parse(notes))
+            let updatedNotes = [...pNotes, totalNotes];
+            fs.writeFile('db/db.json', JSON.stringify(updatedNotes)).then(
+                (data) => {
+                    console.log('Note has been Added');
+                    res.send('Note has been Added');
+                }
+            )
+        }
+    );
+});
+
+
+router.delete('/notes/:id', (req, res) => {
+    let id = req.params.id
+    note.totalNotes().then((notes) => {
+        for (const note of notes) {
+            if (note.id === id) {
+                const index = notes.indexOf(note)
+                notes.splice(index, 1)
+                let getNotes = JSON.stringify(notes)
+                fs.writeFile('./db/db.json', getNotes, (err) =>
+                    err ? console.log(err) : console.log('Note has been Added'));
+
+
+            }
+
+        }
+
     })
-    .catch(err => res.status(500).json(err))
-})
+    note.totalNotes().then((notes) => res.json(notes));
+});
 
-router.post('/notes', async (req, res) => {
-    try {
-        const postNotes = await note.postNotes(req.body)
-        res.status(200).json(postNotes)
-    } catch (err) {
-        res.status(400).json(err)
-    }
-})
 
-router.delete('/notes/:id', (req,res) => {
-    const deleteNote = note.destroy({
-        where: {
-            id: req.params.id,
-        },
-    }).catch((err) => res.json(err))
-    res.json(deleteNote)
-})
 
-module.exports = router
+
+module.exports = router;
