@@ -14,24 +14,23 @@ router.post('/notes', (req, res) => {
     const title = req.body.title;
     const text = req.body.text;
 
-    const totalNotes = { title, text, id: uuidv4() };
+    const newNote = { title, text, id: uuidv4() };
 
     let pNotes;
 
     fs.readFile('db/db.json', "utf8").then(
         (notes) => {
             pNotes = [].concat(JSON.parse(notes))
-            let updatedNotes = [...pNotes, totalNotes];
-            fs.writeFile('db/db.json', JSON.stringify(updatedNotes)).then(
+            let updateNotes = [...pNotes, newNote];
+            fs.writeFile('db/db.json', JSON.stringify(updateNotes)).then(
                 (data) => {
-                    console.log('Note has been Added');
-                    res.send('Note has been Added');
+                    console.log("Added the note!");
+                    res.send("Added the note!");
                 }
             )
         }
     );
 });
-
 
 router.delete('/notes/:id', (req, res) => {
     let id = req.params.id
@@ -42,7 +41,7 @@ router.delete('/notes/:id', (req, res) => {
                 notes.splice(index, 1)
                 let getNotes = JSON.stringify(notes)
                 fs.writeFile('./db/db.json', getNotes, (err) =>
-                    err ? console.log(err) : console.log('Note has been Added'));
+                    err ? console.log(err) : console.log('Added the note!'));
 
 
             }
