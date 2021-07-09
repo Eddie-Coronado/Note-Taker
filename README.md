@@ -2,6 +2,13 @@
 
 # Note Taker
 
+
+
+https://user-images.githubusercontent.com/75331399/125011727-db215400-e01d-11eb-8a6e-17e295feb9ec.mp4
+
+
+
+
 ## Badges
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 https://choosealicense.com/licenses/mit/
